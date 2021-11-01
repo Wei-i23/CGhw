@@ -1,0 +1,235 @@
+<html>
+<head>
+	<title>
+		HW1-time-based animation
+	</title>
+	<style>
+		body {
+			overflow: hidden
+		}
+		#title{
+			position: absolute;
+			width: 100vw;
+			text-align: center;
+			color:yellow;
+		}
+		
+	</style>
+</head>
+<body>
+	<div id= title>
+		<h1>Homework 1</h1>
+		<h2>
+			<button id = "toggle" style="width:10%">
+				Start
+			</button>
+			<button id = "clockKind" style="width:10%">Quartz</button>
+			<button id = "reset" style="width:10%">Reset</button>
+		</h2>
+		<h3>
+			<button id = "Secend" style="width:10%">Secend</button>
+			<p id = 's'>秒數</p>
+		</h3>	
+		
+	</div>
+	<div>
+		
+	<div>
+	
+<audio id="clocksound" style="display:none">
+<source src="clock.mp3" type='audio/wav'>
+</audio>
+
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	
+<script>
+	var camera, scene, renderer;
+	var turn = false ,angle = 0,time = 3600;
+	var kind = true,sec = 0,arrive = false;
+	var zero = false,reset = false;
+	var clockShow,clock,hand;
+	
+	$('#toggle').click(function(){
+		turn = !turn;
+		if(turn){
+			$('#toggle').text('stop');
+			setTimeout(sect,0);
+		}
+		else{
+			$('#toggle').text('start');
+			
+		}
+	});
+	
+	$('#clockKind').click(function(){
+		kind = !kind;
+		if(kind){
+			$('#clockKind').text('Quartz');
+		}
+		else {
+			$('#clockKind').text('Sector')			
+		}
+	});
+	
+	$('#reset').click(function(){
+		reset = !reset;
+		if(reset){
+			$('#toggle').text('start');
+			$('#clockKind').text('Quartz');
+			$('#Secend').text('Secend');
+			$('#s').text('秒數');
+			sec = 0 ;
+			angle = 2*Math.PI/6 *(sec/10);
+			hand.rotation.z = -angle;
+		
+			turn = false;
+			arrive = false;
+			reset = false;
+		}
+		
+	});
+	
+	$('#Secend').click(function(){
+		sec += 10;
+		if(sec == 10){
+			$('#Secend').text('10s');
+			$('#s').text('倒數10秒');
+				
+		}
+		else if(sec == 20){
+			$('#Secend').text('20s');
+			$('#s').text('倒數20秒');
+		}
+		else if(sec == 30){
+			$('#Secend').text('30s');
+			$('#s').text('倒數30秒');
+		}
+		else if(sec == 40){
+			$('#Secend').text('40s');
+			$('#s').text('倒數40秒');
+		}
+		else if(sec == 50){
+			$('#Secend').text('50s');
+			$('#s').text('倒數50秒');
+		}
+		else if(sec == 60){
+			$('#Secend').text('60s');
+			$('#s').text('倒數60秒');
+		}
+		else if(sec > 60){
+			$('#s').text('最多60秒');
+			sec = 0;
+			$('#Secend').text('Secend');
+		}
+	
+		angle = 2*Math.PI/6 *(sec/10);
+		hand.rotation.z = -angle;
+		
+	});
+	
+	init();
+	animate();
+
+	
+	function clockMesh(){
+		let loader = new THREE.TextureLoader();
+		let icon = loader.load('https://i.imgur.com/J9sPPdm.png');
+		clockShow = new THREE.Group();
+		
+		circle = new THREE.Mesh (new THREE.CircleGeometry(10,32), 
+				new THREE.MeshBasicMaterial({
+					color : 'white',
+					map:icon,
+					side: THREE.DoubleSide,
+				}));
+		
+		//起點
+		let start = new THREE.Mesh(new THREE.BoxGeometry(1,2,1),new THREE.MeshBasicMaterial({color: 'white'}));
+		start.position.set(0,9,0.5);
+		//指針
+		hand = new THREE.Group();
+		let handBody = new THREE.Mesh(new THREE.BoxGeometry(1.5,5,1),new THREE.MeshBasicMaterial({color: 'gray'}));
+		let handTop = new THREE.Mesh(new THREE.CircleGeometry(1.8,0),new THREE.MeshBasicMaterial({color: 'white'}));
+		handTop.rotation.z = -Math.PI/6;
+		handBody.position.set(0,1.5,0.5);
+		handTop.position.set(0,2.4,0.5);
+		handBody.add(handTop);
+		hand.add(handBody);
+		
+		
+		clockShow.add(circle,start,hand);
+		scene.add(clockShow);
+		
+		
+	}
+	
+	function init(){
+		scene = new THREE.Scene();
+		camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+		camera.position.set (0,0,100);
+		
+		renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.setClearColor(0x888888);
+
+		var controls = new THREE.OrbitControls(camera, renderer.domElement);
+    
+		document.body.appendChild(renderer.domElement);
+		
+		clock = new THREE.Clock();
+		clock.getDelta();	//first call to getDelta()
+		
+		clockMesh();
+	
+		
+	}
+	
+	function sect(){
+		
+		if(turn == true && kind == false){
+		
+			angle -= 6/180*Math.PI;
+			setTimeout(sect,1000);	
+		}
+	}
+
+	function animate(){
+		var dt = clock.getDelta();
+		
+		
+		if(turn){
+			if(angle < -0.02){
+				
+				arrive = true;
+			}
+		}
+		
+		if(arrive){
+			if(turn){
+				//console.log(angle);
+				hand.position.set();
+				
+				clocksound.play();
+				setTimeout(() => { clocksound.pause(); clocksound.currentTime = 0; }, 10000);
+			}
+		}
+		else{
+			if(turn == true && kind == true ){
+				angle -= 2*Math.PI*dt/60;
+			}		
+			hand.position.set(Math.sin(angle),Math.cos(angle),0);
+			hand.rotation.z = -angle;
+					
+			//console.log(angle);
+			
+			
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
+		}
+	}
+	
+</script>
+</body>
+</html>
