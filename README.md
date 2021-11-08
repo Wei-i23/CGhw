@@ -14,4 +14,7 @@
 <br>
 	<a href = "https://wei-i23.github.io/CGhw/hw2/hw2.html">HW2</a>
 	-車子
+<br>
+	<a href = "https://wei-i23.github.io/CGhw/hw3.html">HW3</a>
+	-三視圖
 </p>
