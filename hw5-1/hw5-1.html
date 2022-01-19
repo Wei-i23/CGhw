@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {
+			background-color: #fff;
+			color: #111;
+			margin: 0px;
+			overflow: hidden;
+			font-family: Monospace;
+			font-size: 20px;
+			position: absolute;
+		}
+		#info {
+			position: absolute;
+			top: 0px;
+			width: 100%;
+			padding: 5px;
+			text-align: center;
+			color: #ffff00;
+		}
+	</style>
+</head>
+<body>
+	<div id="info">HW5-1 </div>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<script id="myVertexShader" type="x-shader/x-vertex">
+    uniform vec3 lightpos;  // world coordinate
+    varying vec3 eyelightdir;
+    varying vec3 eyenormal;   
+    varying vec4 eyepos;
+    
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+        eyepos = modelViewMatrix * vec4 (position, 1.0);
+        vec4 eyelightpos= viewMatrix * vec4 (lightpos, 1.0);
+        eyelightdir =  eyelightpos.xyz - eyepos.xyz;
+        eyenormal = normalMatrix * normal;
+    }
+</script>
+<script id="myFragmentShader" type="x-shader/x-fragment">
+    varying vec3 eyelightdir;
+    varying vec3 eyenormal;
+    varying vec4 eyepos;
+    
+    void main() {
+        float intensity = dot (normalize (eyenormal), normalize (eyelightdir));         if (intensity > 0.8)
+        	intensity = 0.8;
+        else if (intensity > 0.4)
+         	intensity = 0.4;
+        else
+          intensity = 0.0;
+        vec3 diffuse = intensity*vec3 (1,1,1);
+    
+        vec3 h = normalize(-normalize (eyepos.xyz) + normalize (eyelightdir));
+        float shininess = 40.;    
+        vec3 specular = pow (dot (eyenormal, h), shininess) *vec3 (1,0,0);
+        //gl_FragColor = vec4(diffuse + specular, 1.0);
+        gl_FragColor = vec4 (diffuse + vec3(0,0,0.13), 1.0);
+    }
+</script>
+<script type = 'module'>
+
+import * as THREE from "https://threejs.org/build/three.module.js";
+import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
+import { TeapotGeometry } from 'https://raw.githack.com/mrdoob/three.js/dev/examples/jsm/geometries/TeapotGeometry.js';
+
+javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='https://mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+
+import {init, animate} from './main.js';
+
+init();
+animate();
+
+</script>
+</body>
+</html>
