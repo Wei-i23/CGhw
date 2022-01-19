@@ -20,4 +20,10 @@
 <br>
 	<a href = "https://wei-i23.github.io/CGhw/hw4/hw4.html">HW4</a>
 	-Candle Light Animation
+<br>
+	<a href = "https://wei-i23.github.io/CGhw/hw5-1/hw5-1.html">HW5-1</a>
+	-GLSL Homework
+<br>
+	<a href = "https://wei-i23.github.io/CGhw/hw5-2/hw5-2.html">HW5-2</a>
+	-GLSL Homework
 </p>
