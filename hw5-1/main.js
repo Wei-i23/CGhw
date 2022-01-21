@@ -17,7 +17,7 @@ function init() {
     renderer.setSize(width, height);
     document.body.appendChild(renderer.domElement);
     renderer.setClearColor(0x888888);
-
+ 
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
